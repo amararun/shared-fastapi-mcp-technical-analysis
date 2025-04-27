@@ -1,0 +1,5 @@
+# Gemini API key
+GEMINI_API_KEY=AIzaSyCscNIkBvwCPVaU0-P6M
+
+# Gemini model name
+GEMINI_MODEL_NAME=gemini-2.0-flash-001
