@@ -1,0 +1,92 @@
+openapi: 3.1.0
+info:
+  title: Technical Analysis API
+  description: An API for generating comprehensive technical analysis reports for stocks using Yahoo Finance data and AI-powered analysis.
+  version: 1.0.0
+servers:
+  - url: https://your-api-url.com
+    description: Technical Analysis API server
+paths:
+  /api/technical-analysis:
+    post:
+      operationId: createTechnicalAnalysis
+      summary: Generate technical analysis report for a stock
+      description: Generates technical analysis report with daily and weekly timeframe analysis, including price trends, indicators (EMAs, MACD, RSI, BB), support/resistance levels, and volume analysis. Returns both PDF and HTML report formats.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ticker
+                - daily_start_date
+                - daily_end_date
+                - weekly_start_date
+                - weekly_end_date
+              properties:
+                ticker:
+                  type: string
+                  description: The stock symbol to analyze (e.g., 'AAPL' for Apple, 'MSFT' for Microsoft). Must be a valid Yahoo Finance ticker symbol.
+                  example: "AAPL"
+                daily_start_date:
+                  type: string
+                  format: date
+                  description: Start date for daily price data analysis. Should be at least 6 months before daily_end_date for meaningful analysis.
+                  example: "2023-07-01"
+                daily_end_date:
+                  type: string
+                  format: date
+                  description: End date for daily price data analysis. Must be after daily_start_date and not in the future.
+                  example: "2023-12-31"
+                weekly_start_date:
+                  type: string
+                  format: date
+                  description: Start date for weekly price data analysis. Should be at least 1 year before weekly_end_date for meaningful analysis.
+                  example: "2022-01-01"
+                weekly_end_date:
+                  type: string
+                  format: date
+                  description: End date for weekly price data analysis. Must be after weekly_start_date and not in the future.
+                  example: "2023-12-31"
+      responses:
+        '200':
+          description: Successful generation of technical analysis report
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - pdf_url
+                  - html_url
+                properties:
+                  pdf_url:
+                    type: string
+                    description: URL to download the PDF version of the technical analysis report
+                    example: "https://storage.example.com/reports/analysis_AAPL_2023.pdf"
+                  html_url:
+                    type: string
+                    description: URL to view the interactive HTML version of the technical analysis report
+                    example: "https://viewer.example.com/reports/analysis_AAPL_2023.html"
+        '400':
+          description: Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    description: Error message describing what went wrong
+                    example: "Invalid date range specified"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    description: Error message describing what went wrong
+                    example: "Error generating analysis: Internal server error"
