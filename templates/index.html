@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        /* Custom Tailwind Configuration */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        indigo: {
+                            950: '#1e1b4b',
+                            900: '#312e81',
+                            800: '#3730a3',
+                            700: '#4338ca',
+                            200: '#c7d2fe',
+                            100: '#e0e7ff',
+                            50: '#eef2ff',
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom Gradient Header */
+        .header-gradient {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 flex flex-col">
+    <!-- Professional Header with Gradient Background - Now with responsive design -->
+    <header class="header-gradient text-white shadow-lg border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-2 md:gap-4 py-2 px-4">
+            <!-- Title and subtitle section -->
+            <div class="flex flex-col md:flex-row items-center gap-1 md:gap-4 w-full md:w-auto">
+                <h1 class="text-lg md:text-xl font-semibold whitespace-nowrap tracking-tight">
+                    Technical Analysis
+                </h1>
+                <div class="hidden md:block h-5 w-px bg-indigo-300/20"></div>
+                <span class="text-sm md:text-base text-indigo-100 font-medium tracking-tight">
+                    Analyze • Visualize • Decide
+                </span>
+            </div>
+
+            <!-- Divider for mobile -->
+            <div class="w-full h-px md:hidden bg-indigo-300/20 my-2"></div>
+
+            <!-- Powered by section -->
+            <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4 w-full md:w-auto">
+                <span class="text-sm md:text-[15px] font-medium whitespace-nowrap bg-indigo-800/80 px-3 md:px-4 py-1 md:py-1.5 rounded-md border border-indigo-700 shadow-sm">
+                    <span class="text-indigo-200 mr-1 md:mr-2">Powered by:</span>
+                    <span class="text-white">Google Gemini & yfinance</span>
+                </span>
+                <div class="flex items-center gap-2">
+                    <img src="{{ url_for('static', path='/img/GEMINI_LOGO.png') }}" alt="Google Gemini" class="h-5 md:h-7 w-auto rounded-lg">
+                    <img src="{{ url_for('static', path='/img/YFINANCE_LOGO.png') }}" alt="Yahoo Finance" class="h-5 md:h-7 w-auto rounded-lg">
+                    <a href="https://rex.tigzig.com/mcp-server-technical-analysis" target="_blank" rel="noopener" 
+                        class="inline-flex items-center px-2 md:px-3 py-1 md:py-1.5 bg-green-600 text-white text-xs md:text-sm font-medium rounded-md hover:bg-green-700 transition-colors">
+                        <svg class="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-1.5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        Docs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area - Made more compact -->
+    <div class="max-w-7xl mx-auto px-4 pt-3 pb-2 flex-grow">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3">
+            <h2 class="text-lg font-semibold mb-2">Generate Technical Analysis Report</h2>
+            <p class="text-gray-600 mb-3 text-sm">Enter a stock ticker and date ranges to generate comprehensive technical analysis with daily and weekly charts.</p>
+            
+            <form id="analysis-form" class="space-y-4">
+                <div class="space-y-1">
+                    <label for="ticker" class="block text-sm font-medium text-gray-700">Stock Ticker Symbol</label>
+                    <input type="text" id="ticker" name="ticker" placeholder="e.g., AAPL, MSFT, GOOGL" 
+                        class="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-sm font-medium mb-2">Daily Chart Range</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="daily-start-date" class="block text-xs font-medium text-gray-700">Start Date</label>
+                                <input type="date" id="daily-start-date" name="daily_start_date" 
+                                    class="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            </div>
+                            <div>
+                                <label for="daily-end-date" class="block text-xs font-medium text-gray-700">End Date</label>
+                                <input type="date" id="daily-end-date" name="daily_end_date" 
+                                    class="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-sm font-medium mb-2">Weekly Chart Range</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="weekly-start-date" class="block text-xs font-medium text-gray-700">Start Date</label>
+                                <input type="date" id="weekly-start-date" name="weekly_start_date" 
+                                    class="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            </div>
+                            <div>
+                                <label for="weekly-end-date" class="block text-xs font-medium text-gray-700">End Date</label>
+                                <input type="date" id="weekly-end-date" name="weekly_end_date" 
+                                    class="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <button type="submit" id="submit-button" 
+                        class="px-4 py-1.5 bg-indigo-600 text-white font-medium rounded-md shadow-sm hover:bg-indigo-700 transition-colors">
+                        Generate Analysis
+                    </button>
+                </div>
+            </form>
+            
+            <div id="loading" class="hidden items-center py-3">
+                <div class="animate-spin rounded-full h-6 w-6 border-4 border-indigo-200 border-t-indigo-600 mr-3"></div>
+                <div class="text-gray-700 font-medium text-sm">Generating technical analysis... This may take 1-3 minutes.</div>
+            </div>
+            
+            <div id="error-message" class="hidden mt-3 p-2 bg-red-50 text-red-600 rounded-md border-l-4 border-red-500 text-sm"></div>
+            
+            <div id="results" class="hidden mt-4 p-3 bg-green-50 rounded-md"></div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3">
+            <h2 class="text-lg font-semibold mb-2">About This Tool</h2>
+            <p class="text-gray-600 mb-2 text-sm">This technical analysis generator uses data from Yahoo Finance to create comprehensive analysis reports with:</p>
+            <ul class="list-disc pl-5 mb-2 space-y-0.5 text-gray-600 text-sm">
+                <li>Price charts with EMA, MACD, RSI, and Bollinger Bands</li>
+                <li>Daily and weekly timeframes for complete market perspective</li>
+                <li>AI-powered analysis of support/resistance levels and trend identification</li>
+                <li>Volume analysis and pattern recognition</li>
+            </ul>
+            <p class="text-gray-600 text-sm">The analysis takes 1-3 minutes to generate due to the detailed data processing and AI analysis performed.</p>
+        </div>
+        
+        <!-- Disclaimer Section -->
+        <div class="bg-amber-50 rounded-xl shadow-sm border border-amber-200 p-4 mb-3">
+            <h2 class="text-lg font-semibold mb-2 text-amber-800">Important Disclaimer</h2>
+            <p class="text-amber-800 text-sm">
+                The content in this report is for demonstration purposes only and is not investment research, investment analysis, or financial advice. 
+                This is a technical demonstration of how to use FastAPI to send data and charts to an LLM/AI via a web API call, 
+                receive a markdown-formatted response, convert it to PDF, and return downloadable links.
+            </p>
+        </div>
+        
+        <!-- Professional Footer - Moved up to be visible without scrolling -->
+        <footer class="bg-white/50 border-t border-indigo-100 py-3 mt-2 text-sm text-indigo-950/70">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-2">
+                    <div class="text-sm text-indigo-950/70 text-center md:text-left">
+                        Amar Harolikar <span class="mx-1.5 text-indigo-300">•</span> 
+                        Specialist - Decision Sciences & Applied Generative AI
+                    </div>
+                    <div class="flex items-center gap-4 text-sm">
+                        <a href="https://www.linkedin.com/in/amarharolikar" target="_blank" rel="noopener noreferrer"
+                            class="text-indigo-600 hover:text-indigo-700 hover:underline">
+                            LinkedIn
+                        </a>
+                        <a href="https://rex.tigzig.com" target="_blank" rel="noopener noreferrer"
+                            class="text-indigo-600 hover:text-indigo-700 hover:underline">
+                            rex.tigzig.com
+                        </a>
+                        <a href="https://tigzig.com" target="_blank" rel="noopener noreferrer"
+                            class="text-indigo-600 hover:text-indigo-700 hover:underline">
+                            tigzig.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Tigzig tracking IDs - generated once per device/session
+        const tigzigDeviceId = localStorage.getItem('tigzig_did') || (() => {
+            const id = crypto.randomUUID();
+            localStorage.setItem('tigzig_did', id);
+            return id;
+        })();
+        const tigzigSessionId = sessionStorage.getItem('tigzig_sid') || (() => {
+            const id = crypto.randomUUID();
+            sessionStorage.setItem('tigzig_sid', id);
+            return id;
+        })();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('analysis-form');
+            const loadingElement = document.getElementById('loading');
+            const resultsElement = document.getElementById('results');
+            const errorElement = document.getElementById('error-message');
+            const submitButton = document.getElementById('submit-button');
+
+            // Prefill dates with sensible defaults
+            setupDefaultDates();
+            
+            // Form submission handler
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Clear previous results and errors
+                resultsElement.classList.add('hidden');
+                resultsElement.innerHTML = '';
+                errorElement.classList.add('hidden');
+                errorElement.textContent = '';
+                
+                // Get form values
+                const ticker = document.getElementById('ticker').value.trim().toUpperCase();
+                const dailyStartDate = document.getElementById('daily-start-date').value;
+                const dailyEndDate = document.getElementById('daily-end-date').value;
+                const weeklyStartDate = document.getElementById('weekly-start-date').value;
+                const weeklyEndDate = document.getElementById('weekly-end-date').value;
+                
+                // Validate inputs
+                if (!ticker) {
+                    showError('Please enter a ticker symbol');
+                    return;
+                }
+                
+                if (!dailyStartDate || !dailyEndDate || !weeklyStartDate || !weeklyEndDate) {
+                    showError('Please fill in all date fields');
+                    return;
+                }
+                
+                // Show loading spinner
+                loadingElement.classList.remove('hidden');
+                loadingElement.classList.add('flex');
+                submitButton.disabled = true;
+                
+                try {
+                    // Prepare request payload
+                    const payload = {
+                        ticker: ticker,
+                        daily_start_date: dailyStartDate,
+                        daily_end_date: dailyEndDate,
+                        weekly_start_date: weeklyStartDate,
+                        weekly_end_date: weeklyEndDate
+                    };
+                    
+                    // Send API request
+                    const response = await fetch('/api/technical-analysis', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Tigzig-Origin': 'technical-analysis-root',
+                            'X-Tigzig-Visitor-Id': tigzigDeviceId,
+                            'X-Tigzig-Session-Id': tigzigSessionId
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    // Process response
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Failed to generate technical analysis');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Display results with links
+                    resultsElement.innerHTML = `
+                        <h3 class="text-base font-semibold mb-2">Technical Analysis for ${ticker} Generated!</h3>
+                        <p class="mb-2 text-sm">View your analysis reports:</p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="${data.pdf_url}" target="_blank" 
+                                class="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
+                                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path>
+                                </svg>
+                                Download PDF Report
+                            </a>
+                            <a href="${data.html_url}" target="_blank" 
+                                class="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors">
+                                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                                View HTML Report
+                            </a>
+                        </div>
+                    `;
+                    resultsElement.classList.remove('hidden');
+                    
+                } catch (error) {
+                    showError(error.message || 'An unexpected error occurred');
+                } finally {
+                    // Hide loading spinner
+                    loadingElement.classList.add('hidden');
+                    loadingElement.classList.remove('flex');
+                    submitButton.disabled = false;
+                }
+            });
+            
+            function showError(message) {
+                errorElement.textContent = message;
+                errorElement.classList.remove('hidden');
+            }
+            
+            function setupDefaultDates() {
+                // Set default dates (daily: last 6 months, weekly: last 2 years)
+                const today = new Date();
+                
+                // Daily end date = today
+                const dailyEndDate = formatDate(today);
+                document.getElementById('daily-end-date').value = dailyEndDate;
+                
+                // Daily start date = 6 months ago
+                const dailyStartDate = new Date(today);
+                dailyStartDate.setMonth(today.getMonth() - 6);
+                document.getElementById('daily-start-date').value = formatDate(dailyStartDate);
+                
+                // Weekly end date = today
+                document.getElementById('weekly-end-date').value = dailyEndDate;
+                
+                // Weekly start date = 2 years ago
+                const weeklyStartDate = new Date(today);
+                weeklyStartDate.setFullYear(today.getFullYear() - 2);
+                document.getElementById('weekly-start-date').value = formatDate(weeklyStartDate);
+            }
+            
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+        });
+    </script>
+    
+    <!-- Statcounter Code -->
+    <script type="text/javascript">
+        var sc_project = 13047808;
+        var sc_invisible = 1;
+        var sc_security = "b480b311";
+    </script>
+    <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+    <noscript>
+        <div class="statcounter">
+            <a title="web stats" href="https://statcounter.com/" target="_blank">
+                <img class="statcounter" src="https://c.statcounter.com/13047808/0/b480b311/1/" alt="web stats" referrerPolicy="no-referrer-when-downgrade" />
+            </a>
+        </div>
+    </noscript>
+    <!-- End of Statcounter Code -->
+</body>
+</html> 
